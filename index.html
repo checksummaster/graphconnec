@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<style>
+
+    #container {
+        position: absolute;
+        left:0px;
+        top:0px;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+    }
+    body {overflow: hidden}
+
+</style>
+
+<body>
+    <div id="container"></div>
+
+    <template id="mixer_template">
+        <pre>2->1</pre>
+    </template>
+
+    <template id="splitter_template">
+        <pre>1->2</pre>
+    </template>
+
+    <template id="button_template">
+        <pre id='myname'>off</pre>
+        <button id="mybutton">Start</button>
+    </template>
+
+    <template id="display_template">
+        <pre id='myname' style="width:200px; height:100px; overflow:scroll;">-</pre>
+    </template>
+
+    <template id="delay_template">
+        <input type="text" id="delay" value="1000">
+    </template>
+
+    <template id="freq_template">
+            <input type="text" id="freq" value="1000">
+    </template>
+
+    <link rel="stylesheet" type="text/css" href="graphconnect.css">
+    <script src="draggable.js"></script>
+    <script src="graphconnect.js"></script>
+
+    <script>
+        var objectlist = [{
+                name: 'mixer',
+                template: 'mixer_template',
+                pins: [{
+                        obj: null,
+                        type: 'i'
+                    },
+                    {
+                        obj: null,
+                        type: 'i'
+                    }, {
+                        obj: null,
+                        type: 'o'
+                    }
+                ],
+                make: function (me, data) {
+                    this.value = [];
+                    data.pins[0].fire = function (me, data, value) {
+                        this.value[0] = value;
+                        data.pins[2].fire(me, data, this.value);
+                    }.bind(this);
+                    data.pins[1].fire = function (me, data, value) {
+                        this.value[1] = value;
+                        data.pins[2].fire(me, data, this.value);
+                    }.bind(this);
+                }
+            },
+            {
+                name: 'splitter',
+                template: 'splitter_template',
+                pins: [{
+                        obj: null,
+                        type: 'i'
+                    },
+                    {
+                        obj: null,
+                        type: 'o'
+                    }, {
+                        obj: null,
+                        type: 'o'
+                    }
+                ],
+                make: function (me, data) {
+                    data.pins[0].fire = function (me, data, value) {
+                        data.pins[1].fire(me, data, value);
+                        data.pins[2].fire(me, data, value);
+                    }
+                }
+            },
+            {
+                name: 'button',
+                template: 'button_template',
+                pins: [{
+                    obj: null,
+                    type: 'o'
+                }],
+                make: function (me, data) {
+                    this.mybutton = domGet('mybutton', me);
+                    this.value = false;
+                    this.mybutton.onclick = function () {
+                        this.value = !this.value;
+                        domGet('myname', me).innerHTML = this.value ? "on" : "off";
+                        data.pins[0].fire(me, data, {
+                            value: this.value
+                        });
+                    }.bind(this);
+                }
+            },
+            {
+                name: 'display',
+                template: 'display_template',
+                pins: [{
+                    obj: null,
+                    type: 'i',
+
+                }],
+                make: function (me, data) {
+                    data.pins[0].fire = function (me, data, value) {
+                        domGet('myname', me).innerHTML = JSON.stringify(value, null, 2);
+                    }
+                }
+            },
+            {
+                name: 'delay',
+                template: 'delay_template',
+                pins: [{
+                    obj: null,
+                    type: 'i',
+
+                }, {
+                    obj: null,
+                    type: 'o'
+                }],
+                make: function (me, data) {
+                    data.pins[0].fire = function (me, data, value) {
+                        var time = domGet('delay', me).value;
+                        setTimeout(function () {
+                            data.pins[1].fire(me, data, value);
+                        }, time);
+
+                    }
+                }
+            },
+            {
+                name: 'freq',
+                template: 'freq_template',
+                pins: [{
+                    obj: null,
+                    type: 'o'
+                }],
+                make: function (me, data) {
+
+                    this.value = false;
+                    this.start = function() {
+                        if (this.interval) {
+                            clearInterval( this.interval)
+                        }
+                        var time = domGet('freq', me).value;
+                        this.interval = setInterval(function(){
+                            this.value  = !this.value ;
+                            data.pins[0].fire(me, data, {value:this.value} );
+                        },time);
+                    }
+                    this.start();
+                    domGet('freq', me).onchange = function() {
+                        this.start();
+                    }.bind(this);
+                }
+            }
+
+        ];
+
+        // getElementById but for node module
+        function domGet(id, rootNode) {
+            if (!id) return null;
+
+            if (rootNode === undefined) {
+                var o = document.getElementById(id);
+                return o;
+
+            } else {
+
+
+                var nodes = [];
+                nodes.push(rootNode);
+                while (nodes && nodes.length > 0) {
+                    var children = [];
+                    for (var i = 0; i < nodes.length; i++) {
+                        var node = nodes[i];
+                        if (node && node['id'] !== undefined) {
+                            if (node.id == id) {
+                                return node;
+                            }
+                        }
+
+                        var childNodes = node.childNodes;
+                        if (childNodes && childNodes.length > 0) {
+                            for (var j = 0; j < childNodes.length; j++) {
+                                children.push(childNodes[j]);
+                            }
+                        }
+                    }
+                    nodes = children;
+                }
+                return null;
+            }
+        }
+
+        var _g = new graphconnect(document.getElementById('container'), objectlist);
+    </script>
+
+</body>
+</html>

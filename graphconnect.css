@@ -1,0 +1,84 @@
+.graphconnect {
+    background-color:black;
+    padding: 0px;
+    margin: 0px;
+    border: 0px;
+}
+
+.graphconnect .object {
+    position: absolute;
+    width: auto;
+    height: auto;
+    border: 1px solid black;
+    user-select: none;
+    border-radius: 2px;
+}
+
+.graphconnect .connector {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    border: 1px solid black;
+    background-color: yellow;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.graphconnect .toolsbox {
+    background-color: blue;
+    position: absolute;
+    left: 0%;
+    top: 0;
+    width: 98px;
+    bottom: 0;
+    border: 1px solid black;
+}
+
+.graphconnect .toolsboxitem {
+    background-color: lightblue;
+    position: absolute;
+    left: 0px;
+    width: 70px;
+    border: 1px solid black;
+    user-select: none;
+    margin: 10px;
+    border-radius: 25px;
+    padding: 2px;
+    text-align: center;
+}
+
+.graphconnect .dragboard {
+    background-color: white;
+    position: absolute;
+    left: 100px;
+    top: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.graphconnect .header {
+    padding: 10px;
+    cursor: move;
+    background-color: #2196F3;
+    color: #fff;
+    padding: 1px;
+    width: 100%;
+    height: 12px;
+    font-size: 12px;
+    border-radius: 2px;
+}
+
+.graphconnect .close {
+    cursor: pointer;
+    border: 1px solid black;
+    float: right;
+    height: 10px;
+    padding: 0px;
+    border-radius: 2px;
+}
+
+.graphconnect .close::before {
+    content: 'x';
+    font-weight: 200;
+    font-family: Arial, sans-serif;
+}
