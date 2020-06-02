@@ -230,6 +230,7 @@ var graphconnect = function (container, objectlist) {
         var close = document.createElement('div');
         header.className = 'header';
         close.className = 'close';
+        close.style.marginRight = "5px";
         header.innerHTML = newobj.data.name;
         header.appendChild(close);
 
@@ -252,14 +253,25 @@ var graphconnect = function (container, objectlist) {
 
         var temp = document.getElementById(newobj.data.template);
         var clon = temp.content.cloneNode(true);
+        var divclone = document.createElement('div');
+        divclone.appendChild(clon);
+        newobj.appendChild(divclone);
 
+        divclone.style.display = "block";
+        divclone.style.position = "absolute";
+        divclone.style.left = "0px";
+        divclone.style.right = "0px";
+        divclone.style.top = "15px";
+        divclone.style.bottom = "0px";
+        divclone.style.overflow = newobj.data.scroll?"auto":"hidden";
 
-        newobj.appendChild(clon);
+        newobj.style.width = "100px"; //clon.style.width // + e.clientX - startX + "px";
+        newobj.style.height = "100px"; //clon.style.height // startHeight + e.clientY - startY + "px";
 
+        
         var n_input = 0;
         var n_output = 0;
-        var c_input = 1;
-        var c_output = 1;
+        
 
         for (i = 0; i < newobj.data.pins.length; i++) {
             if (newobj.data.pins[i].type === 'o')  {
@@ -276,25 +288,12 @@ var graphconnect = function (container, objectlist) {
             var line = getline(targtype, newobj, this, e);
         }
 
+   
+
         for (i = 0; i < newobj.data.pins.length; i++) {
             newobj.data.pins[i].obj = document.createElement('div');
             newobj.data.pins[i].obj.className = 'connector';
             newobj.appendChild(newobj.data.pins[i].obj);
-
-            var w = newobj.offsetWidth;
-            var w2 = newobj.data.pins[i].obj.offsetWidth;
-            var h = newobj.offsetHeight;
-
-            if (newobj.data.pins[i].type === 'o') {
-                newobj.data.pins[i].obj.style.top = h / (n_output + 1) * c_output + 'px';
-                c_output++;
-                newobj.data.pins[i].obj.style.left = w - 1 + 'px';
-            } else {
-                newobj.data.pins[i].obj.style.top = h / (n_input + 1) * c_input + 'px';
-                c_input++;
-                newobj.data.pins[i].obj.style.left = -w2 - 1 + 'px';
-            }
-
             newobj.data.pins[i].obj.pin = i;
 
             if (newobj.data.pins[i].type === 'o') {
@@ -302,6 +301,32 @@ var graphconnect = function (container, objectlist) {
             }
             newobj.data.pins[i].obj.onmousedown = mousedown;
         }
+
+        function pinsposition() {
+            var c_input = 1;
+            var c_output = 1;
+            for (i = 0; i < newobj.data.pins.length; i++) {
+                var w = newobj.offsetWidth;
+                var w2 = newobj.data.pins[i].obj.offsetWidth;
+                var h = newobj.offsetHeight;
+
+                if (newobj.data.pins[i].type === 'o') {
+                    newobj.data.pins[i].obj.style.top = h / (n_output + 1) * c_output + 'px';
+                    c_output++;
+                    newobj.data.pins[i].obj.style.left = w - 1 + 'px';
+                } else {
+                    newobj.data.pins[i].obj.style.top = h / (n_input + 1) * c_input + 'px';
+                    c_input++;
+                    newobj.data.pins[i].obj.style.left = -w2 - 1 + 'px';
+                }
+
+                
+            }
+            for (var j of newobj.data.pins) {
+                alignline(j.connector);
+            }
+        }
+        pinsposition();
 
         newobj.data.code = new newobj.data.make(newobj, newobj.data);
 
@@ -320,6 +345,58 @@ var graphconnect = function (container, objectlist) {
                 }
             }
         });
+
+
+        function initDrag(e) {
+            element = this.parentPopup;
+            
+        
+            startX = e.clientX;
+            startY = e.clientY;
+            startWidth = parseInt(
+              document.defaultView.getComputedStyle(element).width,
+              10
+            );
+            startHeight = parseInt(
+              document.defaultView.getComputedStyle(element).height,
+              10
+            );
+            document.documentElement.addEventListener("mousemove", doDrag, false);
+            document.documentElement.addEventListener("mouseup", stopDrag, false);
+          }
+        
+          function doDrag(e) {
+            element.style.width = startWidth + e.clientX - startX + "px";
+            element.style.height = startHeight + e.clientY - startY + "px";
+            pinsposition();
+          }
+        
+          function stopDrag() {
+            document.documentElement.removeEventListener("mousemove", doDrag, false);
+            document.documentElement.removeEventListener("mouseup", stopDrag, false);
+            
+          }
+
+        var right = document.createElement("div");        
+        right.style.cssText = "width: 5px;height: 100%;background: transparent;position: absolute;right: 0;bottom: 0;cursor: e-resize;"
+        newobj.appendChild(right);
+        right.addEventListener("mousedown", initDrag, false);
+        right.parentPopup = newobj;
+
+        var bottom = document.createElement("div");
+        bottom.style.cssText = "width: 100%;height: 5px;background: transparent;position: absolute;right: 0;bottom: 0;cursor: n-resize;"
+        newobj.appendChild(bottom);
+        bottom.addEventListener("mousedown", initDrag, false);
+        bottom.parentPopup = newobj;
+
+        var both = document.createElement("div");
+        both.style.cssText = "width: 5px;height: 5px;background: transparent;position: absolute;right: 0;bottom: 0;cursor: nw-resize;"
+        newobj.appendChild(both);
+        both.addEventListener("mousedown", initDrag, false);
+        both.parentPopup = newobj;
+
+
+
     }
 
     for (var o of objectlist) {

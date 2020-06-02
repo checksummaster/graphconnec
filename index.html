@@ -31,7 +31,8 @@
     </template>
 
     <template id="display_template">
-        <pre id='myname' style="width:200px; height:100px; overflow:scroll;">-</pre>
+        <!--<pre id='myname' style="width:200px; height:100px; overflow:scroll;">-</pre>-->
+        <pre id='myname' >-</pre>
     </template>
 
     <template id="delay_template">
@@ -41,6 +42,11 @@
     <template id="freq_template">
             <input type="text" id="freq" value="1000">
     </template>
+
+    <template id="image_template">
+        <img id="myimage" src="img_girl.jpg" alt="Girl in a jacket" style='width:100%;height:100%'>
+    </template>
+
 
     <link rel="stylesheet" type="text/css" href="graphconnect.css">
     <script src="draggable.js"></script>
@@ -127,7 +133,8 @@
                     data.pins[0].fire = function (me, data, value) {
                         domGet('myname', me).innerHTML = JSON.stringify(value, null, 2);
                     }
-                }
+                },
+                scroll: true
             },
             {
                 name: 'delay',
@@ -174,6 +181,26 @@
                     domGet('freq', me).onchange = function() {
                         this.start();
                     }.bind(this);
+                }
+            },
+            {
+                name: 'image',
+                template: 'image_template',
+                pins: [{
+                    obj: null,
+                    type: 'i',
+
+                }],
+                
+                make: function (me, data) {
+                    data.pins[0].fire = function (me, data, value) {
+                        var v = value;
+                        if (Array.isArray(v)) {
+                            v= v[0];
+                        }
+                        domGet('myimage', me).style.filter=v.value?"invert(100%)":"invert(0%)";
+                   
+                    }
                 }
             }
 
