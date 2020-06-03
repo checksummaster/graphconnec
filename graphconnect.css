@@ -12,6 +12,7 @@
     border: 1px solid black;
     user-select: none;
     border-radius: 2px;
+    background-color: gray;
 }
 
 .graphconnect .connector {
@@ -47,6 +48,30 @@
     text-align: center;
 }
 
+.graphconnect .toolsboxbutton {
+    background-color: lightgreen;
+    position: absolute;
+    left: 0px;
+    width: 70px;
+    border: 1px solid black;
+    user-select: none;
+    margin: 10px;
+    border-radius: 25px;
+    padding: 2px;
+    text-align: center;
+}
+
+.graphconnect .toolsboxseparator {
+    background-color: orange;
+    position: absolute;
+    left: 0px;
+    width: 100px;
+    user-select: none;
+    text-align: center;
+    margin-top: 10px;
+    padding-top: 2px;
+}
+
 .graphconnect .dragboard {
     background-color: white;
     position: absolute;
@@ -63,7 +88,7 @@
     color: #fff;
     padding: 1px;
     width: 100%;
-    height: 12px;
+    height: 20px;
     font-size: 12px;
     border-radius: 2px;
 }
@@ -72,13 +97,70 @@
     cursor: pointer;
     border: 1px solid black;
     float: right;
-    height: 10px;
+    height: 16px;
     padding: 0px;
     border-radius: 2px;
+    margin-right: 5px;
 }
 
 .graphconnect .close::before {
     content: 'x';
-    font-weight: 200;
+    font-weight: 300;
     font-family: Arial, sans-serif;
 }
+
+.graphconnect .tooltip {
+    position: relative;
+    display: inline-block;
+  }
+  
+  
+  .graphconnect .toolsbox .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }
+
+  .graphconnect .toolsbox .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: -5px;
+    left: 115%;
+  }
+  
+  .graphconnect  .dragboard .tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+    position: absolute;
+    z-index: 1;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -60px;
+  }
+  
+  .graphconnect .dragboard .tooltip .tooltiptext::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: black transparent transparent transparent;
+  }
+
+  .graphconnect .tooltip:hover .tooltiptext {
+    visibility: visible;
+  }

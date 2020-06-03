@@ -49,23 +49,27 @@
 
 
     <link rel="stylesheet" type="text/css" href="graphconnect.css">
-    <script src="draggable.js"></script>
+
     <script src="graphconnect.js"></script>
 
     <script>
         var objectlist = [{
                 name: 'mixer',
+                tooltip:'make array',
                 template: 'mixer_template',
                 pins: [{
-                        obj: null,
-                        type: 'i'
+                       
+                        type: 'i',
+                        tooltip:'in1'
                     },
                     {
-                        obj: null,
-                        type: 'i'
+                       
+                        type: 'i',
+                        tooltip:'in2'
                     }, {
-                        obj: null,
-                        type: 'o'
+                       
+                        type: 'o',
+                        tooltip:'out'
                     }
                 ],
                 make: function (me, data) {
@@ -82,17 +86,21 @@
             },
             {
                 name: 'splitter',
+                tooltip:'send information to two units',
                 template: 'splitter_template',
                 pins: [{
-                        obj: null,
-                        type: 'i'
+                       
+                        type: 'i',
+                        tooltip:'in1'
                     },
                     {
-                        obj: null,
-                        type: 'o'
+                       
+                        type: 'o',
+                        tooltip:'out1'
                     }, {
-                        obj: null,
-                        type: 'o'
+                       
+                        type: 'o',
+                        tooltip:'out2'
                     }
                 ],
                 make: function (me, data) {
@@ -104,10 +112,12 @@
             },
             {
                 name: 'button',
+                tooltip:'press my button ;)',
                 template: 'button_template',
                 pins: [{
-                    obj: null,
-                    type: 'o'
+                   
+                    type: 'o',
+                    tooltip:'out'
                 }],
                 make: function (me, data) {
                     this.mybutton = domGet('mybutton', me);
@@ -123,10 +133,12 @@
             },
             {
                 name: 'display',
+                tooltip:'text display',
                 template: 'display_template',
                 pins: [{
-                    obj: null,
+                   
                     type: 'i',
+                    tooltip:'in1'
 
                 }],
                 make: function (me, data) {
@@ -138,14 +150,17 @@
             },
             {
                 name: 'delay',
+                tooltip:'delay information',
                 template: 'delay_template',
                 pins: [{
-                    obj: null,
+                   
                     type: 'i',
+                    tooltip:'in1'
 
                 }, {
-                    obj: null,
-                    type: 'o'
+                   
+                    type: 'o',
+                    tooltip:'out'
                 }],
                 make: function (me, data) {
                     data.pins[0].fire = function (me, data, value) {
@@ -159,10 +174,12 @@
             },
             {
                 name: 'freq',
+                tooltip:'freq in cyle time',
                 template: 'freq_template',
                 pins: [{
-                    obj: null,
-                    type: 'o'
+                   
+                    type: 'o',
+                    tooltip:'out'
                 }],
                 make: function (me, data) {
 
@@ -181,14 +198,30 @@
                     domGet('freq', me).onchange = function() {
                         this.start();
                     }.bind(this);
+                },
+                save: function(me,data) 
+                {
+                    return JSON.stringify({
+                        speed:domGet('freq', me).value
+                        
+                    })
+                },
+                load: function(me,data,v) 
+                {
+                    domGet('freq', me).value = JSON.parse(v).speed;
+                    speed:domGet('freq', me).onchange();
                 }
+
             },
             {
                 name: 'image',
+                tooltip:'image that can be inverted',
+                width:'400px',
+                height:'600px',
                 template: 'image_template',
-                pins: [{
-                    obj: null,
+                pins: [{                   
                     type: 'i',
+                    tooltip:"invert image"
 
                 }],
                 
@@ -198,52 +231,23 @@
                         if (Array.isArray(v)) {
                             v= v[0];
                         }
-                        domGet('myimage', me).style.filter=v.value?"invert(100%)":"invert(0%)";
+                        if (v) {
+                            domGet('myimage', me).style.filter=v.value?"invert(100%)":"invert(0%)";
+                        }
                    
                     }
+                },
+                resize: function(me, data)
+                {
+                    console.log("Image resize");
+                }, 
+                move: function(me, data)
+                {
+                    console.log("Image move");
                 }
             }
-
         ];
-
-        // getElementById but for node module
-        function domGet(id, rootNode) {
-            if (!id) return null;
-
-            if (rootNode === undefined) {
-                var o = document.getElementById(id);
-                return o;
-
-            } else {
-
-
-                var nodes = [];
-                nodes.push(rootNode);
-                while (nodes && nodes.length > 0) {
-                    var children = [];
-                    for (var i = 0; i < nodes.length; i++) {
-                        var node = nodes[i];
-                        if (node && node['id'] !== undefined) {
-                            if (node.id == id) {
-                                return node;
-                            }
-                        }
-
-                        var childNodes = node.childNodes;
-                        if (childNodes && childNodes.length > 0) {
-                            for (var j = 0; j < childNodes.length; j++) {
-                                children.push(childNodes[j]);
-                            }
-                        }
-                    }
-                    nodes = children;
-                }
-                return null;
-            }
-        }
-
         var _g = new graphconnect(document.getElementById('container'), objectlist);
     </script>
-
 </body>
 </html>
