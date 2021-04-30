@@ -691,6 +691,11 @@ var graphconnect = function (container, objectlist) {
     
     }
 
+    this.reconnection = function() 
+    {
+      
+    }
+
 
     container.classList.add('graphconnect');
     function fireoutputpin(root, data, value) {
@@ -977,6 +982,7 @@ var graphconnect = function (container, objectlist) {
         ret.load = data.load;
         ret.resize = data.resize;
         ret.move = data.move;
+        ret.delete = data.delete;
         return ret;
     }
 
@@ -1025,6 +1031,10 @@ var graphconnect = function (container, objectlist) {
 
             for (var i of this.parentNode.parentNode.data.pins) {
                 deleteline(i.connector);
+            }
+            if (this.parentNode.parentNode.data.delete) {
+              this.parentNode.parentNode.data.delete(this.parentNode.parentNode.data.delete,this.parentNode.parentNode.data.delete.data);
+              
             }
             dragboard.removeChild(this.parentNode.parentNode);
         };
